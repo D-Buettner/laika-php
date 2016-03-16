@@ -4,7 +4,7 @@
     "homepage": "https://github.com/MEDIGO/laika-php",
     "license": "MIT",
     "require": {
-        "guzzlehttp/guzzle": "^6.1"
+		    "guzzlehttp/guzzle": "~4.0"
     },
     "require-dev": {
         "phake/phake": "@stable"
