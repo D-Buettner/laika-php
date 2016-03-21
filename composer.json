@@ -10,8 +10,8 @@
         "phake/phake": "@stable"
     },
     "autoload": {
-        "psr-0": {
-            "Aws": "/"
+        "psr-4": {
+            "Medigo\\Laika\\": "src/"
         }
     }
 }
