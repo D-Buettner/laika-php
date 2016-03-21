@@ -8,5 +8,10 @@
     },
     "require-dev": {
         "phake/phake": "@stable"
+    },
+    "autoload": {
+        "psr-0": {
+            "Aws": "/"
+        }
     }
 }
