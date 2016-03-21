@@ -8,10 +8,5 @@
     },
     "require-dev": {
         "phake/phake": "@stable"
-    },
-    "autoload": {
-        "psr-4": {
-            "Medigo\\Laika\\": "src/"
-        }
     }
 }
