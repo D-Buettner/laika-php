@@ -61,7 +61,7 @@ class Laika
      */
     public function fetchAllFeatures()
     {
-        $requestResult = $this->httpRequest('GET', 'api/features');
+        $requestResult = $this->httpRequest('api/features');
         if ($requestResult === false) {
             return false;
         }
@@ -76,15 +76,14 @@ class Laika
     /**
      * Executes HTTP requests.
      *
-     * @param  string request type.
      * @param  string API endpoint.
      * @return array|boolean returns an array with the information decoded from the json. If problems occurred, returns false.
      */
-    protected function httpRequest($type, $endpoint)
+    protected function httpRequest($endpoint)
     {
-        $res = $this->client->request($type, $this->url . $endpoint);
+        $res = $this->client->get($this->url . $endpoint);
 
-        if ($res->getStatusCode() === 200) {
+        if ($res->getStatusCode() === "200") {
             $body = $res->getBody();
 
             $decodeResult = json_decode($body, true);

@@ -53,7 +53,7 @@ class LaikaTest extends \PHPUnit_Framework_TestCase
     public function testFetchAllFeatures()
     {
         //checks if laika can get the features and process them successfully
-        Phake::when($this->laika)->httpRequest('GET', 'api/features')->thenReturn($this->features);
+        Phake::when($this->laika)->httpRequest('api/features')->thenReturn($this->features);
         $this->assertEquals(true, $this->laika->fetchAllFeatures());
     }
 
