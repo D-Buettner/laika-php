@@ -44,7 +44,7 @@ class LaikaTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->laika = Phake::partialMock('Medigo\Laika', 'e', 'url');
+        $this->laika = Phake::partialMock('Medigo\Laika', 'e', 'url', null, null);
     }
 
     /**

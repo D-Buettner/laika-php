@@ -32,16 +32,34 @@ class Laika
     protected $environmentName;
 
     /**
+     * Basic authentication username.
+     *
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * Basic authentication password.
+     *
+     * @var string
+     */
+    protected $password;
+
+    /**
      * Constructor function for Laika
      *
      * @param string $environmentName environment in which the code is being executed.
      * @param string $url             url for the API server.
+     * @param string $username        username for the basic authentication.
+     * @param string $password        password for the basic authentication.
      */
-    public function __construct($environmentName, $url)
+    public function __construct($environmentName, $url, $username, $password)
     {
         $this->client          = new Client();
         $this->environmentName = $environmentName;
         $this->url             = $url;
+        $this->username        = $username;
+        $this->password        = $password;
     }
 
     /**
@@ -81,9 +99,11 @@ class Laika
      */
     protected function httpRequest($endpoint)
     {
-        $res = $this->client->get($this->url . $endpoint);
+        $res = $this->client->get($this->url . $endpoint, [
+            'auth' => [$this->username, $this->password]
+        ]);
 
-        if ($res->getStatusCode() === "200") {
+        if ($res->getStatusCode() === '200') {
             $body = $res->getBody();
 
             $decodeResult = json_decode($body, true);
@@ -107,7 +127,7 @@ class Laika
         if (isset($this->features[$featureName])) {
             return $this->features[$featureName]['status'][$this->environmentName];
         }
-        trigger_error("Feature " . $featureName . " not defined", E_USER_WARNING);
+        trigger_error('Feature ' . $featureName . ' not defined', E_USER_WARNING);
         return false;
     }
 }
