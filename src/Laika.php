@@ -124,10 +124,9 @@ class Laika
      */
     public function isEnabled($featureName)
     {
-        if (isset($this->features[$featureName])) {
-            return $this->features[$featureName]['status'][$this->environmentName];
+        if (!isset($this->features[$featureName])) {
+            throw new Exception('Feature ' . $featureName . ' not defined');
         }
-        trigger_error('Feature ' . $featureName . ' not defined', E_USER_WARNING);
-        return false;
+        return $this->features[$featureName]['status'][$this->environmentName];
     }
 }
