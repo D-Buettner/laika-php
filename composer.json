@@ -1,5 +1,6 @@
 {
     "name": "medigo/laika",
+    "version": "1.0.0",
     "type": "library",
     "homepage": "https://github.com/MEDIGO/laika-php",
     "license": "MIT",
