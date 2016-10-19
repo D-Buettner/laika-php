@@ -1,5 +1,7 @@
 # laika-php
 
+Maintainer: Diego
+
 laika-php is a PHP library that connects applications with the Laika feature flag service (https://github.com/MEDIGO/laika).
 It is used for applications to know which flags are activated in the current environment and adapt to it.
 
