@@ -48,85 +48,84 @@ class Laika
     /**
      * Constructor function for Laika
      *
-     * @param string $environmentName environment in which the code is being executed.
-     * @param string $url             url for the API server.
-     * @param string $username        username for the basic authentication.
-     * @param string $password        password for the basic authentication.
+     * @param string $environmentName Environment in which the code is being executed.
+     * @param string $url URL for the API server.
+     * @param string $username Username for the basic authentication.
+     * @param string $password Password for the basic authentication.
+     * @param array $features Optional array with features indexed by name. If the array is not
+     *                        provided the features will be fetched from the client.
      */
-    public function __construct($environmentName, $url, $username, $password)
+    public function __construct($environmentName, $url, $username, $password, $features = null)
     {
         $this->client          = new Client();
         $this->environmentName = $environmentName;
         $this->url             = $url;
         $this->username        = $username;
         $this->password        = $password;
+        $this->features        = $features;
     }
 
     /**
-     * Setter for the feature array.
+     * Get all the features.
      *
-     * @param array $features array with features. Each feature is also an array.
+     * @return array $features array with features indexed by name.
      */
-    public function setFeatures($features)
+    public function getFeatures()
     {
-        $this->features = $features;
+        if (!$this->features) $this->preloadFeatures();
+        return $this->features;
     }
 
     /**
      * Retrieves all the existing features through an HTTP request and adds them to the features array.
      *
-     * @return boolean true if function executed as expected, false if problems occurred.
+     * @return boolean True if function executed as expected, false if problems occurred.
      */
-    public function fetchAllFeatures()
+    protected function preloadFeatures()
     {
-        $requestResult = $this->httpRequest('api/features');
-        if ($requestResult === false) {
-            return false;
-        }
+        $features = $this->get('api/features');
 
-        foreach ($requestResult as $featureValue) {
-            $this->features[$featureValue['name']] = $featureValue;
+        $this->features = array();
+        foreach ($features as $feature) {
+            $this->features[$feature['name']] = $feature;
         }
-
-        return true;
     }
 
     /**
-     * Executes HTTP requests.
+     * Performs an HTTP Get requests, returning the body parsed as JSON.
      *
      * @param  string API endpoint.
-     * @return array|boolean returns an array with the information decoded from the json. If problems occurred, returns false.
+     * @return array|boolean Returns an array with the information decoded from the json. If problems
+     *                       occurred, returns false.
      */
-    protected function httpRequest($endpoint)
+    protected function get($endpoint)
     {
         $res = $this->client->get($this->url . $endpoint, [
             'auth' => [$this->username, $this->password]
         ]);
 
-        if ($res->getStatusCode() === '200') {
-            $body = $res->getBody();
-
-            $decodeResult = json_decode($body, true);
-            if (is_null($decodeResult)) {
-                return false;
-            }
-
-            return $decodeResult;
+        $payload = json_decode($res->getBody(), true);
+        if (is_null($payload)) {
+            throw new Exception('Failed to decode JSON');
         }
-        return false;
+
+        return $payload;
     }
 
     /**
      * Checks if feature is enabled in the current environment.
      *
      * @param  string $featureName name of the feature to check.
-     * @return boolean true if feature is enabled, false if it is disabled or if problems occurred.
+     * @return boolean True if feature is enabled, false if it is disabled or if problems occurred.
      */
     public function isEnabled($featureName)
     {
+        if (!$this->features) $this->preloadFeatures();
+
         if (!isset($this->features[$featureName])) {
             return false;
         }
+
         return $this->features[$featureName]['status'][$this->environmentName];
     }
 }

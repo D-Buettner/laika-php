@@ -4,66 +4,40 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Medigo\Laika;
 
-/**
- * Class LaikaTest
- **/
-
-$mock = Phake::mock('Medigo\Laika');
-
 class LaikaTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Partial mock of Laika, the class being tested.
-     *
-     * @var Laika
-     */
+
     private $laika;
 
-    /**
-     * Array used on method stubbing to fake the information received from the server.
-     *
-     * @var array
-     */
     private $features = array(
       "f1" => array(
         "id" => 1,
         "created_at" => "2016-03-04T00:00:00Z",
         "name" => "f1",
-        "status" => array('e' => true)
+        "status" => array('test' => true)
       ),
       "f2" => array(
         "id" => 2,
         "created_at" => "2016-03-04T00:00:00Z",
         "name" => "f2",
-        "status" => array('e' => false)
+        "status" => array('test' => false)
       )
     );
 
-    /**
-     * Constructor function for LaikaTest.
-     */
     public function setUp()
     {
-        $this->laika = Phake::partialMock('Medigo\Laika', 'e', 'url', null, null);
+        $this->laika = Phake::partialMock('Medigo\Laika', 'test', 'http://example.org/', 'user', 'password');
+        Phake::when($this->laika)->get('api/features')->thenReturn($this->features);
     }
 
-    /**
-     * Tests Laika's "fetchAllFeatures" function.
-     */
-    public function testFetchAllFeatures()
+    public function testGetFeatures()
     {
-        //checks if laika can get the features and process them successfully
-        Phake::when($this->laika)->httpRequest('api/features')->thenReturn($this->features);
-        $this->assertEquals(true, $this->laika->fetchAllFeatures());
+        $features = $this->laika->getFeatures();
+        $this->assertEquals($this->features, $features);
     }
 
-    /**
-     * Tests Laika's "isEnabled" function.
-     */
     public function testIsEnabled()
     {
-        $this->laika->setFeatures($this->features);
-
         //checks the status of an enabled feature
         $this->assertEquals(true, $this->laika->isEnabled('f1'));
         //checks the status of a disabled feature
